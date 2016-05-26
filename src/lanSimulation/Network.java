@@ -219,7 +219,7 @@ which should be treated by all nodes.
 			}catch (IOException exc) {
 				// just ignore
 			}
-			logging(report, currentNode);
+			currentNode.logging(report, this);
 			currentNode = currentNode.nextNode_;
 		} while (! packet.destination_.equals(currentNode.name_));
 
@@ -229,21 +229,6 @@ which should be treated by all nodes.
 			// just ignore
 		};
 		return true;
-	}
-
-	/**
-	 * @param report
-	 * @param node
-	 */
-	private void logging(Writer report, Node node) {
-		try{
-			report.write("\tNode '");
-			report.write(node.name_);
-			report.write("' passes packet on.\n");
-			report.flush();
-		} catch (IOException exc) {
-			// just ignore
-		};
 	}
 
 	/**
@@ -291,10 +276,10 @@ which should be treated by all nodes.
 
 		startNode = (Node) workstations_.get(workstation);
 
-		logging(report, startNode);
+		startNode.logging(report, this);
 		currentNode = startNode.nextNode_;
 		while ((!packet.destination_.equals(currentNode.name_)) & (!packet.origin_.equals(currentNode.name_))) {
-			logging(report, currentNode);
+			currentNode.logging(report, this);
 			currentNode = currentNode.nextNode_;
 		}
 		;
