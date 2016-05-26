@@ -20,35 +20,39 @@
 package lanSimulation;
 
 import lanSimulation.internals.*;
-
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.io.*;
 
 /**
-A <em>Network</em> represents the basic data stucture for simulating a Local Area Network (LAN).
-The LAN network architecture is a token ring, implying that packahes will be passed from one node to another, until they reached their destination, or until they travelled the whole token ring.
+ * A <em>Network</em> represents the basic data stucture for simulating a Local
+ * Area Network (LAN). The LAN network architecture is a token ring, implying
+ * that packahes will be passed from one node to another, until they reached
+ * their destination, or until they travelled the whole token ring.
  */
 public class Network {
 	/**
-    Holds a pointer to myself.
-    Used to verify whether I am properly initialized.
+	 * Holds a pointer to myself. Used to verify whether I am properly
+	 * initialized.
 	 */
 	private Network initPtr_;
 	/**
-    Holds a pointer to some "first" node in the token ring.
-    Used to ensure that various printing operations return expected behaviour.
+	 * Holds a pointer to some "first" node in the token ring. Used to ensure
+	 * that various printing operations return expected behaviour.
 	 */
 	private Node firstNode_;
 	/**
-    Maps the names of workstations on the actual workstations.
-    Used to initiate the requests for the network.
+	 * Maps the names of workstations on the actual workstations. Used to
+	 * initiate the requests for the network.
 	 */
 	private Hashtable workstations_;
 
 	/**
-Construct a <em>Network</em> suitable for holding #size Workstations.
-<p><strong>Postcondition:</strong>(result.isInitialized()) & (! result.consistentNetwork());</p>
+	 * Construct a <em>Network</em> suitable for holding #size Workstations.
+	 * <p>
+	 * <strong>Postcondition:</strong>(result.isInitialized()) & (!
+	 * result.consistentNetwork());
+	 * </p>
 	 */
 	public Network(int size) {
 		assert size > 0;
@@ -56,25 +60,29 @@ Construct a <em>Network</em> suitable for holding #size Workstations.
 		firstNode_ = null;
 		workstations_ = new Hashtable(size, 1.0f);
 		assert isInitialized();
-		assert ! consistentNetwork();
+		assert !consistentNetwork();
 	}
 
 	/**
-Return a <em>Network</em> that may serve as starting point for various experiments.
-Currently, the network looks as follows.
-    <pre>
-    Workstation Filip [Workstation] -> Node -> Workstation Hans [Workstation]
-    -> Printer Andy [Printer] -> ... 
-    </pre>
-<p><strong>Postcondition:</strong>result.isInitialized() & result.consistentNetwork();</p>
+	 * Return a <em>Network</em> that may serve as starting point for various
+	 * experiments. Currently, the network looks as follows.
+	 * 
+	 * <pre>
+	 Workstation Filip [Workstation] -> Node -> Workstation Hans [Workstation]
+	 -> Printer Andy [Printer] -> ...
+	 * </pre>
+	 * <p>
+	 * <strong>Postcondition:</strong>result.isInitialized() &
+	 * result.consistentNetwork();
+	 * </p>
 	 */
-	public static Network DefaultExample () {
-		Network network = new Network (2);
+	public static Network DefaultExample() {
+		Network network = new Network(2);
 
-		Node wsFilip = new Node (Node.WORKSTATION, "Filip");
+		Node wsFilip = new Node(Node.WORKSTATION, "Filip");
 		Node n1 = new Node(Node.NODE, "n1");
-		Node wsHans = new Node (Node.WORKSTATION, "Hans");
-		Node prAndy = new Node (Node.PRINTER, "Andy");
+		Node wsHans = new Node(Node.WORKSTATION, "Hans");
+		Node prAndy = new Node(Node.PRINTER, "Andy");
 
 		wsFilip.nextNode_ = n1;
 		n1.nextNode_ = wsHans;
@@ -91,18 +99,20 @@ Currently, the network looks as follows.
 	}
 
 	/**
-Answer whether #receiver is properly initialized.
+	 * Answer whether #receiver is properly initialized.
 	 */
-	public boolean isInitialized () {
+	public boolean isInitialized() {
 		return (initPtr_ == this);
 	};
 
 	/**
-Answer whether #receiver contains a workstation with the given name.
-<p><strong>Precondition:</strong>this.isInitialized();</p>
+	 * Answer whether #receiver contains a workstation with the given name.
+	 * <p>
+	 * <strong>Precondition:</strong>this.isInitialized();
+	 * </p>
 	 */
-	public boolean hasWorkstation (String ws) {
-		//return workstations_.containsKey(ws);
+	public boolean hasWorkstation(String ws) {
+		// return workstations_.containsKey(ws);
 		Node n;
 
 		assert isInitialized();
@@ -115,43 +125,72 @@ Answer whether #receiver contains a workstation with the given name.
 	};
 
 	/**
-Answer whether #receiver is a consistent token ring network.
-A consistent token ring network
- - contains at least one workstation and one printer
- - is circular
- - all registered workstations are on the token ring
- - all workstations on the token ring are registered.
-<p><strong>Precondition:</strong>this.isInitialized();</p>
+	 * Answer whether #receiver is a consistent token ring network. A consistent
+	 * token ring network - contains at least one workstation and one printer -
+	 * is circular - all registered workstations are on the token ring - all
+	 * workstations on the token ring are registered.
+	 * <p>
+	 * <strong>Precondition:</strong>this.isInitialized();
+	 * </p>
 	 */
-	public boolean consistentNetwork () {
+	public boolean consistentNetwork() {
 		assert isInitialized();
 		Enumeration iter;
 		Node currentNode;
 		int printersFound = 0, workstationsFound = 0;
 		Hashtable encountered = new Hashtable(workstations_.size() * 2, 1.0f);
 
-		if (workstations_.isEmpty()) {return false;};
-		if (firstNode_ == null) {return false;};
-		//verify whether all registered workstations are indeed workstations
+		if (workstations_.isEmpty()) {
+			return false;
+		}
+		;
+		if (firstNode_ == null) {
+			return false;
+		}
+		;
+		// verify whether all registered workstations are indeed workstations
 		iter = workstations_.elements();
 		while (iter.hasMoreElements()) {
 			currentNode = (Node) iter.nextElement();
-			if (currentNode.type_ != Node.WORKSTATION) {return false;};
-		};
-		//enumerate the token ring, verifying whether all workstations are registered
-		//also count the number of printers and see whether the ring is circular
+			if (currentNode.type_ != Node.WORKSTATION) {
+				return false;
+			}
+			;
+		}
+		;
+		// enumerate the token ring, verifying whether all workstations are
+		// registered
+		// also count the number of printers and see whether the ring is
+		// circular
 		currentNode = firstNode_;
-		while (! encountered.containsKey(currentNode.name_)) {
+		while (!encountered.containsKey(currentNode.name_)) {
 			encountered.put(currentNode.name_, currentNode);
-			if (currentNode.type_ == Node.WORKSTATION) {workstationsFound++;};
-			if (currentNode.type_ == Node.PRINTER) {printersFound++;};
+			if (currentNode.type_ == Node.WORKSTATION) {
+				workstationsFound++;
+			}
+			;
+			if (currentNode.type_ == Node.PRINTER) {
+				printersFound++;
+			}
+			;
 			currentNode = currentNode.nextNode_;
-		};
-		if (currentNode != firstNode_) {return false;};//not circular
-		if (printersFound == 0) {return false;};//does not contain a printer
-		if (workstationsFound != workstations_.size()) {return false;}; //not all workstations are registered
-		//all verifications succeedeed
-		return true;}
+		}
+		;
+		if (currentNode != firstNode_) {
+			return false;
+		}
+		;// not circular
+		if (printersFound == 0) {
+			return false;
+		}
+		;// does not contain a printer
+		if (workstationsFound != workstations_.size()) {
+			return false;
+		}
+		; // not all workstations are registered
+		// all verifications succeedeed
+		return true;
+	}
 
 	/**
 The #receiver is requested to broadcast a message to all nodes.
@@ -177,13 +216,10 @@ which should be treated by all nodes.
 				report.write("\tNode '");
 				report.write(currentNode.name_);
 				report.write("' accepts broadcase packet.\n");
-				report.write("\tNode '");
-				report.write(currentNode.name_);
-				report.write("' passes packet on.\n");
-				report.flush();
-			} catch (IOException exc) {
+			}catch (IOException exc) {
 				// just ignore
-			};
+			}
+			logging(report, currentNode);
 			currentNode = currentNode.nextNode_;
 		} while (! packet.destination_.equals(currentNode.name_));
 
@@ -193,21 +229,47 @@ which should be treated by all nodes.
 			// just ignore
 		};
 		return true;
-	}    
+	}
 
 	/**
-The #receiver is requested by #workstation to print #document on #printer.
-Therefore #receiver sends a packet across the token ring network, until either
-(1) #printer is reached or (2) the packet travelled complete token ring.
-<p><strong>Precondition:</strong> consistentNetwork() & hasWorkstation(workstation);</p>
-@param workstation Name of the workstation requesting the service.
-@param document Contents that should be printed on the printer.
-@param printer Name of the printer that should receive the document.
-@param report Stream that will hold a report about what happened when handling the request.
-@return Anwer #true when the print operation was succesful and #false otherwise
+	 * @param report
+	 * @param node
 	 */
-	public boolean requestWorkstationPrintsDocument(String workstation, String document,
-			String printer, Writer report) {
+	private void logging(Writer report, Node node) {
+		try{
+			report.write("\tNode '");
+			report.write(node.name_);
+			report.write("' passes packet on.\n");
+			report.flush();
+		} catch (IOException exc) {
+			// just ignore
+		};
+	}
+
+	/**
+	 * The #receiver is requested by #workstation to print #document on
+	 * #printer. Therefore #receiver sends a packet across the token ring
+	 * network, until either (1) #printer is reached or (2) the packet travelled
+	 * complete token ring.
+	 * <p>
+	 * <strong>Precondition:</strong> consistentNetwork() &
+	 * hasWorkstation(workstation);
+	 * </p>
+	 * 
+	 * @param workstation
+	 *            Name of the workstation requesting the service.
+	 * @param document
+	 *            Contents that should be printed on the printer.
+	 * @param printer
+	 *            Name of the printer that should receive the document.
+	 * @param report
+	 *            Stream that will hold a report about what happened when
+	 *            handling the request.
+	 * @return Anwer #true when the print operation was succesful and #false
+	 *         otherwise
+	 */
+	public boolean requestWorkstationPrintsDocument(String workstation, String document, String printer,
+			Writer report) {
 		assert consistentNetwork() & hasWorkstation(workstation);
 
 		try {
@@ -220,7 +282,8 @@ Therefore #receiver sends a packet across the token ring network, until either
 			report.write("' ...\n");
 		} catch (IOException exc) {
 			// just ignore
-		};
+		}
+		;
 
 		boolean result = false;
 		Node startNode, currentNode;
@@ -228,27 +291,13 @@ Therefore #receiver sends a packet across the token ring network, until either
 
 		startNode = (Node) workstations_.get(workstation);
 
-		try {
-			report.write("\tNode '");
-			report.write(startNode.name_);
-			report.write("' passes packet on.\n");
-			report.flush();
-		} catch (IOException exc) {
-			// just ignore
-		};
+		logging(report, startNode);
 		currentNode = startNode.nextNode_;
-		while ((! packet.destination_.equals(currentNode.name_))
-				& (! packet.origin_.equals(currentNode.name_))) {
-			try {
-				report.write("\tNode '");
-				report.write(currentNode.name_);
-				report.write("' passes packet on.\n");
-				report.flush();
-			} catch (IOException exc) {
-				// just ignore
-			};
+		while ((!packet.destination_.equals(currentNode.name_)) & (!packet.origin_.equals(currentNode.name_))) {
+			logging(report, currentNode);
 			currentNode = currentNode.nextNode_;
-		};
+		}
+		;
 
 		if (packet.destination_.equals(currentNode.name_)) {
 			result = printDocument(currentNode, packet, report);
@@ -258,14 +307,15 @@ Therefore #receiver sends a packet across the token ring network, until either
 				report.flush();
 			} catch (IOException exc) {
 				// just ignore
-			};
+			}
+			;
 			result = false;
 		}
 
 		return result;
 	}
 
-	private boolean printDocument (Node printer, Packet document, Writer report) {
+	private boolean printDocument(Node printer, Packet document, Writer report) {
 		String author = "Unknown";
 		String title = "Untitled";
 		int startPos = 0, endPos = 0;
@@ -276,27 +326,49 @@ Therefore #receiver sends a packet across the token ring network, until either
 					startPos = document.message_.indexOf("author:");
 					if (startPos >= 0) {
 						endPos = document.message_.indexOf(".", startPos + 7);
-						if (endPos < 0) {endPos = document.message_.length();};
-						author = document.message_.substring(startPos + 7, endPos);};
-						startPos = document.message_.indexOf("title:");
-						if (startPos >= 0) {
-							endPos = document.message_.indexOf(".", startPos + 6);
-							if (endPos < 0) {endPos = document.message_.length();};
-							title = document.message_.substring(startPos + 6, endPos);};
-							accounting(report, author, title);
-							report.write(">>> Postscript job delivered.\n\n");
-							report.flush();
+						if (endPos < 0) {
+							endPos = document.message_.length();
+						}
+						;
+						author = document.message_.substring(startPos + 7, endPos);
+					}
+					;
+					startPos = document.message_.indexOf("title:");
+					if (startPos >= 0) {
+						endPos = document.message_.indexOf(".", startPos + 6);
+						if (endPos < 0) {
+							endPos = document.message_.length();
+						}
+						;
+						title = document.message_.substring(startPos + 6, endPos);
+					}
+					;
+					report.write("\tAccounting -- author = '");
+					report.write(author);
+					report.write("' -- title = '");
+					report.write(title);
+					report.write("'\n");
+					report.write(">>> Postscript job delivered.\n\n");
+					report.flush();
 				} else {
 					title = "ASCII DOCUMENT";
 					if (document.message_.length() >= 16) {
-						author = document.message_.substring(8, 16);};
-						accounting(report, author, title);
-						report.write(">>> ASCII Print job delivered.\n\n");
-						report.flush();
-				};
+						author = document.message_.substring(8, 16);
+					}
+					;
+					report.write("\tAccounting -- author = '");
+					report.write(author);
+					report.write("' -- title = '");
+					report.write(title);
+					report.write("'\n");
+					report.write(">>> ASCII Print job delivered.\n\n");
+					report.flush();
+				}
+				;
 			} catch (IOException exc) {
 				// just ignore
-			};
+			}
+			;
 			return true;
 		} else {
 			try {
@@ -304,30 +376,19 @@ Therefore #receiver sends a packet across the token ring network, until either
 				report.flush();
 			} catch (IOException exc) {
 				// just ignore
-			};
+			}
+			;
 			return false;
 		}
 	}
 
 	/**
-	 * @param report
-	 * @param author
-	 * @param title
-	 * @throws IOException
+	 * Return a printable representation of #receiver.
+	 * <p>
+	 * <strong>Precondition:</strong> isInitialized();
+	 * </p>
 	 */
-	private void accounting(Writer report, String author, String title) throws IOException {
-		report.write("\tAccounting -- author = '");
-		report.write(author);
-		report.write("' -- title = '");
-		report.write(title);
-		report.write("'\n");
-	}
-
-	/**
-Return a printable representation of #receiver.
- <p><strong>Precondition:</strong> isInitialized();</p>
-	 */
-	public String toString () {
+	public String toString() {
 		assert isInitialized();
 		StringBuffer buf = new StringBuffer(30 * workstations_.size());
 		printOn(buf);
@@ -335,10 +396,12 @@ Return a printable representation of #receiver.
 	}
 
 	/**
-Write a printable representation of #receiver on the given #buf.
-<p><strong>Precondition:</strong> isInitialized();</p>
+	 * Write a printable representation of #receiver on the given #buf.
+	 * <p>
+	 * <strong>Precondition:</strong> isInitialized();
+	 * </p>
 	 */
-	public void printOn (StringBuffer buf) {
+	public void printOn(StringBuffer buf) {
 		assert isInitialized();
 		Node currentNode = firstNode_;
 		do {
@@ -359,9 +422,11 @@ Write a printable representation of #receiver on the given #buf.
 				buf.append(" [Printer]");
 				break;
 			default:
-				buf.append("(Unexpected)");;
+				buf.append("(Unexpected)");
+				;
 				break;
-			};
+			}
+			;
 			buf.append(" -> ");
 			currentNode = currentNode.nextNode_;
 		} while (currentNode != firstNode_);
@@ -369,10 +434,12 @@ Write a printable representation of #receiver on the given #buf.
 	}
 
 	/**
-Write a HTML representation of #receiver on the given #buf.
- <p><strong>Precondition:</strong> isInitialized();</p>
+	 * Write a HTML representation of #receiver on the given #buf.
+	 * <p>
+	 * <strong>Precondition:</strong> isInitialized();
+	 * </p>
 	 */
-	public void printHTMLOn (StringBuffer buf) {
+	public void printHTMLOn(StringBuffer buf) {
 		assert isInitialized();
 
 		buf.append("<HTML>\n<HEAD>\n<TITLE>LAN Simulation</TITLE>\n</HEAD>\n<BODY>\n<H1>LAN SIMULATION</H1>");
@@ -397,9 +464,11 @@ Write a HTML representation of #receiver on the given #buf.
 				buf.append(" [Printer]");
 				break;
 			default:
-				buf.append("(Unexpected)");;
+				buf.append("(Unexpected)");
+				;
 				break;
-			};
+			}
+			;
 			buf.append(" </LI>");
 			currentNode = currentNode.nextNode_;
 		} while (currentNode != firstNode_);
@@ -407,10 +476,12 @@ Write a HTML representation of #receiver on the given #buf.
 	}
 
 	/**
-Write an XML representation of #receiver on the given #buf.
-<p><strong>Precondition:</strong> isInitialized();</p>
+	 * Write an XML representation of #receiver on the given #buf.
+	 * <p>
+	 * <strong>Precondition:</strong> isInitialized();
+	 * </p>
 	 */
-	public void printXMLOn (StringBuffer buf) {
+	public void printXMLOn(StringBuffer buf) {
 		assert isInitialized();
 
 		Node currentNode = firstNode_;
@@ -434,9 +505,11 @@ Write an XML representation of #receiver on the given #buf.
 				buf.append("</printer>");
 				break;
 			default:
-				buf.append("<unknown></unknown>");;
+				buf.append("<unknown></unknown>");
+				;
 				break;
-			};
+			}
+			;
 			currentNode = currentNode.nextNode_;
 		} while (currentNode != firstNode_);
 		buf.append("\n</network>");
