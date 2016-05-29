@@ -337,7 +337,7 @@ which should be treated by all nodes.
 		assert isInitialized();
 		Node currentNode = firstNode_;
 		do {
-			currentNode.elegirTipoNodo(buf, this);
+			currentNode.printOn(buf, this);
 			;
 			buf.append(" -> ");
 			currentNode = currentNode.nextNode_;
@@ -359,7 +359,7 @@ which should be treated by all nodes.
 		buf.append("\n\n<UL>");
 		do {
 			buf.append("\n\t<LI> ");
-			currentNode.elegirTipoNodo(buf, this);
+			currentNode.printOn(buf, this);
 			;
 			buf.append(" </LI>");
 			currentNode = currentNode.nextNode_;
@@ -380,27 +380,7 @@ which should be treated by all nodes.
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<network>");
 		do {
 			buf.append("\n\t");
-			switch (currentNode.type_) {
-			case Node.NODE:
-				buf.append("<node>");
-				buf.append(currentNode.name_);
-				buf.append("</node>");
-				break;
-			case Node.WORKSTATION:
-				buf.append("<workstation>");
-				buf.append(currentNode.name_);
-				buf.append("</workstation>");
-				break;
-			case Node.PRINTER:
-				buf.append("<printer>");
-				buf.append(currentNode.name_);
-				buf.append("</printer>");
-				break;
-			default:
-				buf.append("<unknown></unknown>");
-				;
-				break;
-			}
+			currentNode.printXMLOn(buf, this);
 			;
 			currentNode = currentNode.nextNode_;
 		} while (currentNode != firstNode_);
