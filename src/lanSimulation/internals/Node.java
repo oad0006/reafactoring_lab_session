@@ -150,4 +150,15 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 		}
 	}
 
+	public boolean printDocument(Packet packet, Network network, Writer report) {
+		try {
+			report.write(">>> Destinition is not a printer, print job cancelled.\n\n");
+			report.flush();
+		} catch (IOException exc) {
+			// just ignore
+		}
+		;
+		return false;
+	}
+
 }

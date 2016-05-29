@@ -286,7 +286,7 @@ which should be treated by all nodes.
 		;
 
 		if (packet.destination_.equals(currentNode.name_)) {
-			result = packet.printDocument(currentNode, this, report);
+			result = currentNode.printDocument(packet, this, report);
 		} else {
 			try {
 				report.write(">>> Destinition not found, print job cancelled.\n\n");
