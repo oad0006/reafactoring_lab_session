@@ -42,11 +42,6 @@ public class Node {
     A node with type PRINTER may accept packages to be printed.
 	 */
 	public static final byte PRINTER = 2;
-
-	/**
-    Holds the type of the Node.
-	 */
-	public byte type_;
 	/**
     Holds the name of the Node.
 	 */
@@ -63,7 +58,6 @@ Construct a <em>Node</em> with given #type and #name.
 	 */
 	public Node(byte type, String name) {
 		assert (type >= NODE) & (type <= PRINTER);
-		type_ = type;
 		name_ = name;
 		nextNode_ = null;
 	}
@@ -74,7 +68,6 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 	 */
 	public Node(byte type, String name, Node nextNode) {
 		assert (type >= NODE) & (type <= PRINTER);
-		type_ = type;
 		name_ = name;
 		nextNode_ = nextNode;
 	}
@@ -99,26 +92,20 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 	 * @param network TODO
 	 */
 	public void printOn(StringBuffer buf, Network network) {
-		switch (type_) {
-		case Node.NODE:
-			buf.append("Node ");
-			buf.append(name_);
-			buf.append(" [Node]");
-			break;
-		case Node.WORKSTATION:
+		if(this instanceof WorkStation){
 			buf.append("Workstation ");
 			buf.append(name_);
 			buf.append(" [Workstation]");
-			break;
-		case Node.PRINTER:
+		}else if(this instanceof Printer){
 			buf.append("Printer ");
 			buf.append(name_);
 			buf.append(" [Printer]");
-			break;
-		default:
+		}else if(this instanceof Node){
+			buf.append("Node ");
+			buf.append(name_);
+			buf.append(" [Node]");
+		}else{
 			buf.append("(Unexpected)");
-			;
-			break;
 		}
 	}
 
@@ -127,26 +114,20 @@ Construct a <em>Node</em> with given #type and #name, and which is linked to #ne
 	 * @param network TODO
 	 */
 	public void printXMLOn(StringBuffer buf, Network network) {
-		switch (type_) {
-		case Node.NODE:
-			buf.append("<node>");
-			buf.append(name_);
-			buf.append("</node>");
-			break;
-		case Node.WORKSTATION:
+		if(this instanceof WorkStation){
 			buf.append("<workstation>");
 			buf.append(name_);
 			buf.append("</workstation>");
-			break;
-		case Node.PRINTER:
+		}else if(this instanceof Printer){
 			buf.append("<printer>");
 			buf.append(name_);
 			buf.append("</printer>");
-			break;
-		default:
+		}else if(this instanceof Node){
+			buf.append("<node>");
+			buf.append(name_);
+			buf.append("</node>");
+		}else{
 			buf.append("<unknown></unknown>");
-			;
-			break;
 		}
 	}
 
